@@ -11,14 +11,14 @@ export class Service {
         this.storage = new Storage(this.client);
     }
 
-    async createEvent({ eventname, slug, eventdescription, eventVenue, eventdate, featureImage, userId, eventstatus }) {
+    async createEvent({ eventname, slug, content, eventVenue, eventdate, featuredimage, userId, eventstatus }) {
         try {
             return await this.database.createDocument(
                 conf.appwriteDBid,
                 conf.appwriteCollectionId,
                 slug,
                 {
-                    eventname, eventdate, eventdescription, eventVenue, featureImage, eventstatus, userId
+                    eventname, eventdate, content, eventVenue, featuredimage, eventstatus, userId
                 }
             )
         } catch (error) {
@@ -26,13 +26,13 @@ export class Service {
         }
     }
 
-    async updateEvent(slug, { eventname, eventdescription, eventdate, eventVenue, featureImage, eventstatus }) {
+    async updateEvent(slug, { eventname, content, eventdate, eventVenue, featuredimage, eventstatus }) {
         try {
             return await this.database.updateDocument(
                 conf.appwriteDBid,
                 conf.appwriteCollectionId,
                 slug, {
-                eventname, eventdescription, eventdate, eventVenue, featureImage, eventstatus
+                eventname, content, eventdate, eventVenue, featuredimage, eventstatus
             }
             )
         } catch (error) {
@@ -67,7 +67,7 @@ export class Service {
     }
 
     // For passing the keys in query first we need to list down the key in indexes section in appwrite
-    async getPosts(queries = [Query.equal("status", "true")]) {
+    async getPosts(queries = [Query.equal("status", "active")]) {
         try {
             return await this.database.listDocuments(
                 conf.appwriteDBid,
@@ -112,6 +112,10 @@ export class Service {
         return this.storage.getFilePreview(
             conf.appwriteBucketId,
             fileId
-        )
+        );
     }
+
 }
+
+const service = new Service()
+export default service

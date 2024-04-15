@@ -12,10 +12,12 @@ import { AuthLayout, Login } from './component/index.js'
 import AddEvent from "./pages/AddEvent.jsx";
 import Signup from './pages/Signup'
 import EditEvent from "./pages/EditEvent.jsx";
+import BuyTicket from "./pages/BuyTicket.jsx"
 
 import Post from "./pages/Post";
 
 import AllEvent from "./pages/AllEvent.jsx";
+import UserProfile from './pages/UserProfile.jsx'
 
 const router = createBrowserRouter([
   {
@@ -61,11 +63,29 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/user-profile",
+        element: (
+          <AuthLayout authentication>
+            {" "}
+            <UserProfile />
+          </AuthLayout>
+        ),
+      },
+      {
         path: "/edit-event/:slug",
         element: (
           <AuthLayout authentication>
             {" "}
             <EditEvent />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/buy-event-tickets/:slug",
+        element: (
+          <AuthLayout authentication>
+            {" "}
+            <BuyTicket />
           </AuthLayout>
         ),
       },

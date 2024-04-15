@@ -111,6 +111,13 @@ export default function PostForm({ post }) {
                         />
                     </div>
                 )}
+                <Input
+                    label="Number of Seats :"
+                    placeholder="Number of Seats"
+                    type="number"
+                    className="mb-4"
+                    {...register("NumberOfSeats", { required: true })}
+                />
                 <Select
                     options={["active", "inactive"]}
                     label="Status"

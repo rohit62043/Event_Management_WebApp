@@ -24,7 +24,7 @@ export default function Post() {
     }, [slug, navigate]);
 
     const deleteEvent = () => {
-        appwriteService.deletePost(post.$id).then((status) => {
+        appwriteService.deleteEvent(post.$id).then((status) => {
             if (status) {
                 appwriteService.deleteFile(post.featuredimage);
                 navigate("/");
@@ -56,11 +56,25 @@ export default function Post() {
                     )}
                 </div>
                 <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.eventname}</h1>
+                    <h1 className="text-2xl font-bold">Event Name: </h1>
+                    <h2 >{post.eventname}</h2>
                 </div>
                 <div className="browser-css">
+                    <h2 className="text-2xl font-bold">Event Content: </h2>
                     {parse(post.content)}
                 </div>
+                <div className="browser-css">
+                    <h2 className="text-2xl font-bold">Number of Tickets Available: </h2>
+                    {post.NumberOfSeats}
+                </div>
+                <div className="browser-css">
+                    <Link to={`/buy-event-tickets/${post.$id}`}>
+                        <Button bgColor="bg-green-500" className="mr-3">
+                            Buy Tickets
+                        </Button>
+                    </Link>
+                </div>
+
             </Container>
         </div>
     ) : null;

@@ -32,6 +32,11 @@ function Header() {
             slug: '/add-event',
             active: authStatus,
         },
+        {
+            name: 'User Profile',
+            slug: '/user-profile',
+            active: authStatus,
+        },
     ]
     return (
         <header className='py-3 shadow bg-gray-500'>

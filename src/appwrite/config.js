@@ -11,28 +11,41 @@ export class Service {
         this.storage = new Storage(this.client);
     }
 
-    async createEvent({ eventname, slug, content, eventVenue, eventdate, featuredimage, userId, eventstatus }) {
+    async createEvent({ eventname, slug, content, NumberOfSeats, eventVenue, eventdate, featuredimage, userId, eventstatus }) {
         try {
             return await this.database.createDocument(
                 conf.appwriteDBid,
                 conf.appwriteCollectionId,
                 slug,
                 {
-                    eventname, eventdate, content, eventVenue, featuredimage, eventstatus, userId
+                    eventname, eventdate, content, NumberOfSeats, eventVenue, featuredimage, eventstatus, userId
                 }
             )
         } catch (error) {
             console.log("Appwrite servies :: createEvent :: error", error);
         }
     }
+    async createUserDetails({ userId, eventDetails }) {
+        try {
+            return await this.database.createDocument(
+                conf.appwriteDBid,
+                conf.appwriteUserCollectionId,
+                {
+                    userId, eventDetails
+                }
+            )
+        } catch (error) {
+            console.log("Appwrite servies :: createUserDetails :: error", error);
+        }
+    }
 
-    async updateEvent(slug, { eventname, content, eventdate, eventVenue, featuredimage, eventstatus }) {
+    async updateEvent(slug, { eventname, content, NumberOfSeats, eventdate, eventVenue, featuredimage, eventstatus }) {
         try {
             return await this.database.updateDocument(
                 conf.appwriteDBid,
                 conf.appwriteCollectionId,
                 slug, {
-                eventname, content, eventdate, eventVenue, featuredimage, eventstatus
+                eventname, content, NumberOfSeats, eventdate, eventVenue, featuredimage, eventstatus
             }
             )
         } catch (error) {

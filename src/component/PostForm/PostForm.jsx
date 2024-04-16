@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
+    const { register, handleSubmit, setValue, watch, control, getValues } = useForm({
         defaultValues: {
             eventname: post?.eventname || "",
             slug: post?.$id || "",
@@ -14,6 +14,7 @@ export default function PostForm({ post }) {
             status: post?.status || "active",
             eventVenue: post?.eventVenue || "I-Hall",
             eventdate: post?.eventdate || "",
+            NumberOfSeats: post?.NumberOfSeats || "",
         },
     });
 
@@ -21,34 +22,17 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
-
-            if (file) {
-                appwriteService.deleteEvent(post.featuredimage);
-            }
-
-            const dbPost = await appwriteService.updateEvent(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
-
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-            }
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-
-                data.featuredimage = fileId;
-                console.log(data.featuredimage)
-                const dbPost = await appwriteService.createEvent({ ...data, userId: userData.$id });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
+        console.log("Heeeey")
+        const file = post ? post.featuredimage : (await appwriteService.uploadFile(data.image[0]));
+        console.log(post)
+        if (file) {
+            if (post) {
+                console.log("Heeeey")
+                const dbPost = await appwriteService.updateEvent(post.$id, { ...data, featuredimage: file.$id });
+                dbPost && navigate(`/post/${dbPost.$id}`);
+            } else {
+                const dbPost = await appwriteService.createEvent({ ...data, userId: userData.$id, featuredimage: file.$id });
+                dbPost && navigate(`/post/${dbPost.$id}`);
             }
         }
     };
@@ -64,7 +48,7 @@ export default function PostForm({ post }) {
         return "";
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === "eventname") {
                 setValue("slug", slugTransform(value.eventname), { shouldValidate: true });
@@ -77,20 +61,13 @@ export default function PostForm({ post }) {
     return (
         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
             <div className="w-2/3 px-2">
-                <Input
-                    label="EventName :"
-                    placeholder="EventName"
-                    className="mb-4"
-                    {...register("eventname", { required: true })}
-                />
+                <Input label="EventName :" placeholder="EventName" className="mb-4" {...register("eventname", { required: true })} />
                 <Input
                     label="Slug :"
                     placeholder="Slug"
                     className="mb-4"
                     {...register("slug", { required: true })}
-                    onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                    }}
+                    onInput={(e) => setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true })}
                 />
                 <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
@@ -102,15 +79,7 @@ export default function PostForm({ post }) {
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
-                {post && (
-                    <div className="w-full mb-4">
-                        <img
-                            src={appwriteService.getFilePreview(post.featuredimage)}
-                            alt={post.eventname}
-                            className="rounded-lg"
-                        />
-                    </div>
-                )}
+                {post && <img src={appwriteService.getFilePreview(post.featuredimage)} alt={post.eventname} className="w-full rounded-lg mb-4" />}
                 <Input
                     label="Number of Seats :"
                     placeholder="Number of Seats"
@@ -118,24 +87,9 @@ export default function PostForm({ post }) {
                     className="mb-4"
                     {...register("NumberOfSeats", { required: true })}
                 />
-                <Select
-                    options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
-                    {...register("eventstatus", { required: true })}
-                />
-                <Select
-                    options={["Loards", "Oval", "I-Hall"]}
-                    label="Event Venue"
-                    className="mb-4"
-                    {...register("eventVenue", { required: true })}
-                />
-                <Input
-                    label="Event Date :"
-                    placeholder="DD\MM\YY"
-                    className="mb-4"
-                    {...register("eventdate", { required: true })}
-                />
+                <Select options={["active", "inactive"]} label="Status" className="mb-4" {...register("eventstatus", { required: true })} />
+                <Select options={["Loards", "Oval", "I-Hall"]} label="Event Venue" className="mb-4" {...register("eventVenue", { required: true })} />
+                <Input label="Event Date :" placeholder="DD\MM\YY" className="mb-4" {...register("eventdate", { required: true })} />
                 <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
                     {post ? "Update" : "Submit"}
                 </Button>

@@ -33,7 +33,7 @@ export default function Post() {
     };
 
     return post ? (
-        <div className="py-8">
+        <div className="py-8 bg-gray-100">
             <Container>
                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
                     <img
@@ -44,7 +44,7 @@ export default function Post() {
 
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
+                            <Link to={`/edit-event/${post.$id}`}>
                                 <Button bgColor="bg-green-500" className="mr-3">
                                     Edit
                                 </Button>
@@ -56,16 +56,16 @@ export default function Post() {
                     )}
                 </div>
                 <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">Event Name: </h1>
-                    <h2 >{post.eventname}</h2>
+                    <h1 className="text-2xl font-bold mb-2">Event Name: </h1>
+                    <h2 className="text-xl font-semibold mb-4">{post.eventname}</h2>
                 </div>
-                <div className="browser-css">
-                    <h2 className="text-2xl font-bold">Event Content: </h2>
-                    {parse(post.content)}
+                <div className="browser-css mb-6">
+                    <h2 className="text-2xl font-bold mb-2">Event Content: </h2>
+                    <div className="text-lg leading-relaxed">{parse(post.content)}</div>
                 </div>
-                <div className="browser-css">
-                    <h2 className="text-2xl font-bold">Number of Tickets Available: </h2>
-                    {post.NumberOfSeats}
+                <div className="browser-css mb-6">
+                    <h2 className="text-2xl font-bold mb-2">Number of Tickets Available: </h2>
+                    <div className="text-lg">{post.NumberOfSeats}</div>
                 </div>
                 <div className="browser-css">
                     <Link to={`/buy-event-tickets/${post.$id}`}>
@@ -74,7 +74,6 @@ export default function Post() {
                         </Button>
                     </Link>
                 </div>
-
             </Container>
         </div>
     ) : null;
